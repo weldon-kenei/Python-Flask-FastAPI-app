@@ -1,0 +1,38 @@
+name: Deploy to GCP
+
+on:
+  push:
+    branches: [ "main" ]
+
+env:
+  REGION: us-central1
+  REPO: ${{ secrets.GCP_PROJECT_ID }}/insight-agent
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Auth to GCP
+      - uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      # Set up Docker
+      - run: gcloud auth configure-docker $REGION-docker.pkg.dev
+
+      # Build & Push
+      - run: |
+          docker build -t $REGION-docker.pkg.dev/$REPO/insight-agent:$GITHUB_SHA .
+          docker push $REGION-docker.pkg.dev/$REPO/insight-agent:$GITHUB_SHA
+
+      # Terraform Deploy
+      - uses: hashicorp/setup-terraform@v3
+      - run: |
+          cd terraform
+          terraform init
+          terraform apply -auto-approve \
+            -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
+            -var="image_tag=$GITHUB_SHA" \
+            -var="region=$REGION"
