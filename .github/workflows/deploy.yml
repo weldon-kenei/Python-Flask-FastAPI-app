@@ -6,11 +6,12 @@ on:
 
 env:
   REGION: us-central1
-  REPO: ${{ secrets.GCP_PROJECT_ID }}/insight-agent
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      REPO: ${{ secrets.GCP_PROJECT_ID }}/insight-agent
     steps:
       - uses: actions/checkout@v4
 
