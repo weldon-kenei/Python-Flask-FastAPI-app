@@ -28,8 +28,6 @@
    - [x] Auto-build on push
    - [x] Image tag propagation to Terraform
 
-4. **Documentation**:
-   - [x] Clear setup instructions
-   - [x] Architecture diagram
+
 
 ---
