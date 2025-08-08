@@ -1,6 +1,6 @@
 variable "project_id" {
     description = "The GCP project ID"
-    type        = deft-scout-364414
+    type        = sring
 }
 
 variable "region" {
